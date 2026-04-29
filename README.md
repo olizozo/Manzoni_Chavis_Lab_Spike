@@ -1,4 +1,24 @@
 
+Ce dépôt contient le code source du **Pipeline Expert Excitabilité**, une application analytique haute performance conçue pour l'extraction automatisée des propriétés biophysiques neuronales à partir de fichiers `.abf` (Current-Clamp).
+
+---
+
+## 🚀 Déploiement & Accessibilité
+
+L'outil est accessible via deux canaux selon vos besoins de calcul et de confidentialité :
+
+### 1. Accès Web Immédiat (Streamlit Cloud)
+Pour une analyse rapide de quelques cellules sans aucune installation technique :
+👉 [https://manzonichavislab-spikes.streamlit.app/](https://manzonichavislab-spikes.streamlit.app/)
+
+### 2. Version Expert (GitHub & Local)
+Pour les chercheurs souhaitant intégrer l'outil dans des pipelines de calcul intensif ou modifier les algorithmes sources :
+- **Dépôt :** [Lien GitHub du Manzoni Lab]
+- **Installation :**
+  ```bash
+  git clone [https://github.com/votre-depot/manzoni-excitability.git](https://github.com/votre-depot/manzoni-excitability.git)
+  pip install -r requirements.txt
+  streamlit run app_spike.py
 
 # 🔬 Pipeline Expert : Excitabilité & Propriétés Intrinsèques
 **Manzoni Lab | Neurobiologie de la Plasticité Synaptique**
