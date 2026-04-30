@@ -2,7 +2,6 @@ import streamlit as st
 import pyabf
 import numpy as np
 import pandas as pd
-import matplotlib.subplots as plt_subplots
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 import tempfile
@@ -110,13 +109,13 @@ with col_r:
     st.markdown(f"# {T['title']}")
     st.markdown(f"### {T['subtitle']}")
     st.markdown(f"#### {T['desc']}")
-    st.markdown(f"{T['readme_link']} &nbsp; | &nbsp; {T['doi_link']}")  # <-- LIENS SOUS LE TITRE PRINCIPAL
+    st.markdown(f"{T['readme_link']} &nbsp; | &nbsp; {T['doi_link']}")
 
 st.divider()
 
 # --- BARRE LATÉRALE (SIDEBAR) ---
 st.sidebar.markdown(T['readme_link'])
-st.sidebar.markdown(T['doi_link'])  # <-- LIEN DOI DANS LA BARRE LATÉRALE
+st.sidebar.markdown(T['doi_link'])
 st.sidebar.divider()
 
 st.sidebar.header(T['sec1_load'])
