@@ -20,7 +20,8 @@ T = {
         "title": "Pipeline Expert : Excitabilité & Propriétés Intrinsèques",
         "subtitle": "Manzoni Lab | Analyse de la Plasticité Synaptique",
         "desc": "*Extraction automatisée de la Rhéobase (I/V), Sag, Rin, Cm et Tau*",
-        "readme_link": "📖 [Consulter la Documentation (README) sur GitHub](https://github.com/OliManzoni/Manzoni_Chavis_Lab_EPHYS_Stats/blob/main/README.md)",
+        "readme_link": "📖 [Documentation (README)](https://github.com/OliManzoni/Manzoni_Chavis_Lab_EPHYS_Stats/blob/main/README.md)",
+        "doi_link": "🏷️ [DOI: 10.5281/zenodo.19912621](https://doi.org/10.5281/zenodo.19912621)",
         "sec1_load": "📂 1. Chargement & Unités",
         "file_upload": "Charger un fichier ABF",
         "unit_radio": "Unité du canal de courant (I_cmd)",
@@ -59,7 +60,8 @@ T = {
         "title": "Expert Pipeline: Excitability & Intrinsic Properties",
         "subtitle": "Manzoni Lab | Synaptic Plasticity Analysis",
         "desc": "*Automated extraction of Rheobase (I/V), Sag, Rin, Cm, and Tau*",
-        "readme_link": "📖 [View Documentation (README) on GitHub](https://github.com/OliManzoni/Manzoni_Chavis_Lab_EPHYS_Stats/blob/main/README.md)",
+        "readme_link": "📖 [Documentation (README)](https://github.com/OliManzoni/Manzoni_Chavis_Lab_EPHYS_Stats/blob/main/README.md)",
+        "doi_link": "🏷️ [DOI: 10.5281/zenodo.19912621](https://doi.org/10.5281/zenodo.19912621)",
         "sec1_load": "📂 1. Loading & Units",
         "file_upload": "Upload an ABF file",
         "unit_radio": "Current channel unit (I_cmd)",
@@ -108,12 +110,13 @@ with col_r:
     st.markdown(f"# {T['title']}")
     st.markdown(f"### {T['subtitle']}")
     st.markdown(f"#### {T['desc']}")
-    st.markdown(T['readme_link'])  # <-- LIEN SOUS LE TITRE PRINCIPAL
+    st.markdown(f"{T['readme_link']} &nbsp; | &nbsp; {T['doi_link']}")  # <-- LIENS SOUS LE TITRE PRINCIPAL
 
 st.divider()
 
 # --- BARRE LATÉRALE (SIDEBAR) ---
-st.sidebar.markdown(T['readme_link'])  # <-- LIEN DANS LA BARRE LATÉRALE
+st.sidebar.markdown(T['readme_link'])
+st.sidebar.markdown(T['doi_link'])  # <-- LIEN DOI DANS LA BARRE LATÉRALE
 st.sidebar.divider()
 
 st.sidebar.header(T['sec1_load'])
