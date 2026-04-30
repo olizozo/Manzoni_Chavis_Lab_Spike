@@ -120,7 +120,7 @@ st.sidebar.divider()
 
 st.sidebar.header(T['sec1_load'])
 uploaded_file = st.sidebar.file_uploader(T['file_upload'], type=["abf"])
-current_unit = st.sidebar.radio(T['unit_radio'], ["pA", "nA"])
+current_unit = st.sidebar.radio(T['unit_radio'], ["pA", "nA"], index=1)
 
 st.sidebar.header(T['sec2_settings'])
 spike_threshold = st.sidebar.number_input(T['spike_thresh'], value=0.0)
