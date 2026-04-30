@@ -3,6 +3,7 @@ import pyabf
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from scipy.signal import find_peaks
 import tempfile
 import os
@@ -46,6 +47,7 @@ T = {
         "p_iv_x": "Injection ({})",
         "p_fi_title": "Courbe f-I",
         "p_fi_y": "Nombre de PA",
+        "sec6_pop": "🌍 Analyse de la Population du Lot",
         "help_title": "📖 Aide Mémoire : Formalisme & Biophysique",
         "help_text": """
             * **dV/dt Threshold :** Instant où l'accélération du voltage (dérivée) dépasse la valeur cible (marquant l'ouverture massive des canaux Na+).
@@ -86,6 +88,7 @@ T = {
         "p_iv_x": "Injection ({})",
         "p_fi_title": "f-I Curve",
         "p_fi_y": "AP Count",
+        "sec6_pop": "🌍 Batch Population Analysis",
         "help_title": "📖 Cheat Sheet: Formalism & Biophysics",
         "help_text": """
             * **dV/dt Threshold:** The biophysical threshold is defined as the moment the voltage acceleration exceeds the target value.
@@ -115,7 +118,6 @@ st.divider()
 
 # --- BARRE LATÉRALE (SIDEBAR) ---
 st.sidebar.header(T['sec1_load'])
-# Modification Clé : accept_multiple_files=True
 uploaded_files = st.sidebar.file_uploader(T['file_upload'], type=["abf"], accept_multiple_files=True)
 current_unit = st.sidebar.radio(T['unit_radio'], ["pA", "nA"], index=1)
 
@@ -133,7 +135,6 @@ if uploaded_files:
     st.info(f"Traitement de {len(uploaded_files)} fichier(s) en cours...")
     
     for file_idx, uploaded_file in enumerate(uploaded_files):
-        # Utilisation d'un expander pour empiler les analyses proprement
         with st.expander(f"Cellule : {uploaded_file.name}", expanded=(file_idx == 0)):
             
             with tempfile.NamedTemporaryFile(delete=False, suffix=".abf") as tmp_file:
@@ -232,14 +233,18 @@ if uploaded_files:
 
                 st.divider()
 
-                # 4. VISUALISATION AVANCÉE
+                # 4. VISUALISATION AVANCÉE (Avec correction pour Trace Unique)
                 st.markdown(f"**{T['sec5_viz']}**")
                 col_v1, col_v2 = st.columns(2)
                 with col_v1:
-                    # Ajout de clés uniques basées sur le nom du fichier pour éviter les conflits Streamlit
-                    sw_idx = st.slider(T['viz_slider'], 0, abf.sweepCount - 1, 0, key=f"slide_{uploaded_file.name}")
+                    if abf.sweepCount > 1:
+                        sw_idx = st.slider(T['viz_slider'], 0, abf.sweepCount - 1, 0, key=f"slide_{uploaded_file.name}")
+                    else:
+                        sw_idx = 0
+                        st.info("Trace unique détectée (1 seul sweep).")
                 with col_v2:
-                    stk_indices = st.multiselect(T['viz_multi'], list(range(abf.sweepCount)), default=[0, abf.sweepCount//2, abf.sweepCount-1], key=f"multi_{uploaded_file.name}")
+                    default_sweeps = list(set([0, abf.sweepCount//2, abf.sweepCount-1]))
+                    stk_indices = st.multiselect(T['viz_multi'], list(range(abf.sweepCount)), default=default_sweeps, key=f"multi_{uploaded_file.name}")
 
                 plt.switch_backend('Agg') 
                 plt.style.use('seaborn-v0_8-paper')
@@ -294,21 +299,44 @@ if uploaded_files:
                 clean_ax(ax3)
                 
                 st.pyplot(fig)
-                plt.close(fig) # Fermeture explicite de la figure pour la gestion mémoire du batch
+                plt.close(fig) 
 
             except Exception as e:
                 st.error(f"Erreur lors de l'analyse du fichier {uploaded_file.name}: {e}")
             finally:
                 if os.path.exists(tmp_filepath): os.remove(tmp_filepath)
 
-    # --- 5. EXPORTATION MASTER BATCH ---
+    # --- 5. EXPORTATION & VISUALISATION POPULATION (BATCH) ---
     if all_bio_data:
         st.divider()
-        st.header(T['sec4_export'])
+        st.header(T['sec6_pop'])
         
         master_bio_df = pd.DataFrame(all_bio_data)
         master_curve_df = pd.concat(all_curve_data, ignore_index=True)
         
+        # --- Graphiques de Population ---
+        if len(master_bio_df) > 1:
+            plt.figure(figsize=(15, 8))
+            metrics_to_plot = ['Vrest_mV', 'Rin_Mohm', 'Cm_pF', 'Sag_Max_mV']
+            
+            for i, metric in enumerate(metrics_to_plot, 1):
+                plt.subplot(2, 2, i)
+                # Drop NA values for plotting to avoid Seaborn errors
+                clean_data = master_bio_df[metric].dropna()
+                if not clean_data.empty:
+                    sns.boxplot(y=clean_data, color='lightgray', width=0.3, fliersize=0)
+                    sns.stripplot(y=clean_data, color='blue', alpha=0.6, jitter=True, size=6)
+                plt.title(metric.replace('_', ' '))
+                plt.ylabel("")
+                
+            plt.tight_layout()
+            st.pyplot(plt)
+            plt.close()
+        else:
+            st.info("Visualisation de population disponible à partir de 2 cellules chargées.")
+
+        # --- Boutons d'Export ---
+        st.header(T['sec4_export'])
         exp1, exp2 = st.columns(2)
         exp1.download_button(
             T['btn_bio'], 
